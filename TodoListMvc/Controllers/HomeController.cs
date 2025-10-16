@@ -1,32 +1,36 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using TodoListMvc.Models;
 
 namespace TodoListMvc.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
         public IActionResult Index()
         {
-            return View();
+            string? userName = Request.Cookies["UserName"];
+            if (string.IsNullOrEmpty(userName))
+                return View();
+            else
+                return RedirectToAction("Index", "Tasks");
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        [HttpGet]
+        public IActionResult CreateName() => View();
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpPost]
+        public IActionResult CreateName(string name)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                var options = new Microsoft.AspNetCore.Http.CookieOptions
+                {
+                    Expires = DateTime.Now.AddDays(1)
+                };
+                Response.Cookies.Append("UserName", name, options);
+                return RedirectToAction("Index", "Tasks");
+            }
+
+            ModelState.AddModelError("", "Name is required");
+            return View();
         }
     }
 }

@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Enter Name";
+}
+
+<div class="container mt-5 text-center">
+    <h2>Enter your name</h2>
+    <form asp-action="CreateName" method="post" class="mt-4">
+        <div class="mb-3">
+            <input type="text" name="name" class="form-control w-50 mx-auto" placeholder="Enter your name"
+                required />
+        </div>
+        <button type="submit" class="btn btn-success">Continue</button>
+    </form>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <p class="text-danger mt-3">Name is required</p>
+    }
+</div>
